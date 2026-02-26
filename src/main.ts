@@ -1,16 +1,8 @@
 import type { BoardElement } from "./board-element";
+import { FrameRateCounter } from "./frame-rate-counter";
+import { getRootElement } from "./helpers";
 import { Square } from "./square";
 import "./style.css";
-
-const getRootElement = () => {
-    const root = document.querySelector("#app");
-
-    if (!root || !(root instanceof HTMLDivElement)) {
-        throw new Error("Root element not found");
-    }
-
-    return root;
-};
 
 class Board {
     private static canvas: HTMLCanvasElement;
@@ -185,7 +177,7 @@ class Board {
         this.canvas.addEventListener("click", () => {
             if (
                 this.lastClickTimestamp &&
-                Date.now() - this.lastClickTimestamp < 300
+                Date.now() - this.lastClickTimestamp < 250
             ) {
                 this.lastClickTimestamp = Date.now();
 
@@ -244,4 +236,5 @@ class Board {
 
 document.addEventListener("DOMContentLoaded", () => {
     Board.init();
+    FrameRateCounter.init();
 });
