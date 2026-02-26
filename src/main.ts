@@ -123,9 +123,14 @@ class Board {
         square.draw(ctx);
     }
 
+    private static removeAllElements() {
+        this.elements = [];
+    }
+
     static registerEvents() {
         window.addEventListener("resize", () => {
             this.resizeCanvas();
+            this.removeAllElements();
             this.drawRandomSquares();
         });
 
