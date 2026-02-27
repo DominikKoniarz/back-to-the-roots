@@ -1,4 +1,5 @@
 import type { BoardElement } from "./board-element";
+import { Circle } from "./circle";
 import { FrameRateCounter } from "./frame-rate-counter";
 import { getRootElement } from "./helpers";
 import { Square } from "./square";
@@ -49,6 +50,10 @@ class Board {
             width: Math.floor(Math.random() * 150) + 50, // 50-200
             height: Math.floor(Math.random() * 150) + 50, // 50-200
         };
+    }
+
+    private static getRandomRadius() {
+        return Math.floor(Math.random() * 100) + 50; // 50-150
     }
 
     private static updateCursorPosition(event: MouseEvent) {
@@ -123,15 +128,30 @@ class Board {
         square.draw(ctx);
     }
 
-    private static removeAllElements() {
-        this.elements = [];
+    private static drawCircle(
+        ctx: CanvasRenderingContext2D,
+        color: string,
+        position: { x: number; y: number },
+        radius: number
+    ) {
+        const circle = new Circle(position.x, position.y, radius, color);
+        this.elements.push(circle);
+        circle.draw(ctx);
     }
 
-    static registerEvents() {
+    // private static removeAllElements() {
+    //     this.elements = [];
+    // }
+
+    private static registerEvents() {
         window.addEventListener("resize", () => {
             this.resizeCanvas();
-            this.removeAllElements();
-            this.drawRandomSquares();
+            // this.removeAllElements();
+            // this.drawRandomElements();
+
+            this.elements.forEach((element) => {
+                element.draw(this.canvas.getContext("2d")!);
+            });
         });
 
         this.canvas.addEventListener("mousemove", (event) => {
@@ -201,20 +221,36 @@ class Board {
         });
     }
 
-    // draw 5 random squares
-    static drawRandomSquares() {
+    // draw 5 random elements
+    private static drawRandomElements() {
         const ctx = this.canvas.getContext("2d");
 
         if (!ctx) {
             throw new Error("Context not found");
         }
 
-        for (let i = 0; i < 5; i++) {
-            const color = this.getRandomColor();
-            const position = this.getRandomPosition();
-            const size = this.getRandomSize();
+        const drawRandomElement = () => {
+            const random = Math.random();
 
-            this.drawSquare(ctx, color, position, size);
+            if (random < 0.5) {
+                return this.drawSquare(
+                    ctx,
+                    this.getRandomColor(),
+                    this.getRandomPosition(),
+                    this.getRandomSize()
+                );
+            }
+
+            return this.drawCircle(
+                ctx,
+                this.getRandomColor(),
+                this.getRandomPosition(),
+                this.getRandomRadius()
+            );
+        };
+
+        for (let i = 0; i < 5; i++) {
+            drawRandomElement();
         }
     }
 
@@ -234,7 +270,7 @@ class Board {
         root.appendChild(this.canvas);
 
         this.resizeCanvas();
-        this.drawRandomSquares();
+        this.drawRandomElements();
         this.registerEvents();
     }
 }

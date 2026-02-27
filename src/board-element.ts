@@ -1,9 +1,9 @@
-export class BoardElement {
-    private x: number;
-    private y: number;
-    private width: number;
-    private height: number;
-    private color: string;
+export abstract class BoardElement {
+    protected x: number;
+    protected y: number;
+    protected width: number;
+    protected height: number;
+    protected color: string;
 
     constructor(
         x: number,
@@ -19,6 +19,9 @@ export class BoardElement {
         this.color = color;
     }
 
+    abstract isPointInElement(x: number, y: number): boolean;
+    abstract draw(ctx: CanvasRenderingContext2D): void;
+
     public drag(
         boardCursorX: number,
         boardCursorY: number,
@@ -29,24 +32,10 @@ export class BoardElement {
         this.y = boardCursorY - cursorOffsetY;
     }
 
-    public isPointInElement(x: number, y: number) {
-        return (
-            x >= this.x &&
-            x <= this.x + this.width &&
-            y >= this.y &&
-            y <= this.y + this.height
-        );
-    }
-
     public getPosition() {
         return {
             x: this.x,
             y: this.y,
         };
-    }
-
-    public draw(ctx: CanvasRenderingContext2D) {
-        ctx.fillStyle = this.color;
-        ctx.fillRect(this.x, this.y, this.width, this.height);
     }
 }
