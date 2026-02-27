@@ -4,7 +4,7 @@ export class Circle extends BoardElement {
     private radius: number;
 
     constructor(x: number, y: number, radius: number, color: string) {
-        super(x, y, 2 * radius, 2 * radius, color);
+        super(x, y, color);
 
         this.radius = radius;
     }

@@ -1,6 +1,9 @@
 import { BoardElement } from "./board-element";
 
 export class Square extends BoardElement {
+    private width: number;
+    private height: number;
+
     constructor(
         x: number,
         y: number,
@@ -8,7 +11,10 @@ export class Square extends BoardElement {
         height: number,
         color: string
     ) {
-        super(x, y, width, height, color);
+        super(x, y, color);
+
+        this.width = width;
+        this.height = height;
     }
 
     public draw(ctx: CanvasRenderingContext2D): void {
