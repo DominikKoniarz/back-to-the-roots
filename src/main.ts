@@ -9,7 +9,7 @@ class Board {
     private static canvas: HTMLCanvasElement;
     private static elements: BoardElement[] = [];
 
-    // TODO: handle 2D context management
+    // TODO: handle 2D context management !
 
     private static cursorX: number = 0;
     private static cursorY: number = 0;
@@ -199,6 +199,12 @@ class Board {
 
         window.addEventListener("mousedown", (event) => {
             this.updateCursorPosition(event);
+
+            const isPointInCanvas = event.target === this.canvas;
+
+            if (!isPointInCanvas) {
+                return;
+            }
 
             let draggedElement: BoardElement | null = null;
 
