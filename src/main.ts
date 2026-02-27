@@ -18,8 +18,6 @@ class Board {
     private static dragOffsetX: number = 0;
     private static dragOffsetY: number = 0;
 
-    private static lastClickTimestamp: number | null = null;
-
     private static resizeCanvas() {
         const ctx = this.canvas.getContext("2d");
 
@@ -56,6 +54,13 @@ class Board {
 
     private static getRandomRadius() {
         return Math.floor(Math.random() * 100) + 50; // 50-150
+    }
+
+    private static getCursorPosition() {
+        return {
+            x: this.cursorX,
+            y: this.cursorY,
+        } as const;
     }
 
     private static updateCursorPosition(event: MouseEvent) {
@@ -141,9 +146,30 @@ class Board {
         circle.draw(ctx);
     }
 
-    // private static removeAllElements() {
-    //     this.elements = [];
-    // }
+    private static drawRandomElement(mode: "random" | "cursor") {
+        const random = Math.random();
+
+        const position =
+            mode === "random"
+                ? this.getRandomPosition()
+                : this.getCursorPosition();
+
+        if (random < 0.5) {
+            return this.drawSquare(
+                this.canvas.getContext("2d")!,
+                this.getRandomColor(),
+                position,
+                this.getRandomSize()
+            );
+        }
+
+        return this.drawCircle(
+            this.canvas.getContext("2d")!,
+            this.getRandomColor(),
+            position,
+            this.getRandomRadius()
+        );
+    }
 
     private static registerEvents() {
         window.addEventListener("resize", () => {
@@ -201,52 +227,15 @@ class Board {
             this.draggedElement = null;
         });
 
-        this.canvas.addEventListener("click", () => {
-            if (
-                this.lastClickTimestamp &&
-                Date.now() - this.lastClickTimestamp < 250
-            ) {
-                this.lastClickTimestamp = Date.now();
-
-                this.drawSquare(
-                    this.canvas.getContext("2d")!,
-                    this.getRandomColor(),
-                    {
-                        x: this.cursorX,
-                        y: this.cursorY,
-                    },
-                    this.getRandomSize()
-                );
-            }
-
-            this.lastClickTimestamp = Date.now();
+        this.canvas.addEventListener("dblclick", () => {
+            this.drawRandomElement("cursor");
         });
-    }
-
-    private static drawRandomElement() {
-        const random = Math.random();
-
-        if (random < 0.5) {
-            return this.drawSquare(
-                this.canvas.getContext("2d")!,
-                this.getRandomColor(),
-                this.getRandomPosition(),
-                this.getRandomSize()
-            );
-        }
-
-        return this.drawCircle(
-            this.canvas.getContext("2d")!,
-            this.getRandomColor(),
-            this.getRandomPosition(),
-            this.getRandomRadius()
-        );
     }
 
     // draw 5 random elements
     private static drawRandomElements() {
         for (let i = 0; i < 5; i++) {
-            this.drawRandomElement();
+            this.drawRandomElement("random");
         }
     }
 
