@@ -221,36 +221,30 @@ class Board {
         });
     }
 
-    // draw 5 random elements
-    private static drawRandomElements() {
-        const ctx = this.canvas.getContext("2d");
+    private static drawRandomElement() {
+        const random = Math.random();
 
-        if (!ctx) {
-            throw new Error("Context not found");
-        }
-
-        const drawRandomElement = () => {
-            const random = Math.random();
-
-            if (random < 0.5) {
-                return this.drawSquare(
-                    ctx,
-                    this.getRandomColor(),
-                    this.getRandomPosition(),
-                    this.getRandomSize()
-                );
-            }
-
-            return this.drawCircle(
-                ctx,
+        if (random < 0.5) {
+            return this.drawSquare(
+                this.canvas.getContext("2d")!,
                 this.getRandomColor(),
                 this.getRandomPosition(),
-                this.getRandomRadius()
+                this.getRandomSize()
             );
-        };
+        }
 
+        return this.drawCircle(
+            this.canvas.getContext("2d")!,
+            this.getRandomColor(),
+            this.getRandomPosition(),
+            this.getRandomRadius()
+        );
+    }
+
+    // draw 5 random elements
+    private static drawRandomElements() {
         for (let i = 0; i < 5; i++) {
-            drawRandomElement();
+            this.drawRandomElement();
         }
     }
 
