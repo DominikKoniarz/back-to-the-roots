@@ -9,6 +9,8 @@ class Board {
     private static canvas: HTMLCanvasElement;
     private static elements: BoardElement[] = [];
 
+    // TODO: handle 2D context management
+
     private static cursorX: number = 0;
     private static cursorY: number = 0;
 
@@ -154,7 +156,7 @@ class Board {
             });
         });
 
-        this.canvas.addEventListener("mousemove", (event) => {
+        window.addEventListener("mousemove", (event) => {
             this.updateCursorPosition(event);
 
             if (this.draggedElement) {
@@ -169,7 +171,7 @@ class Board {
             }
         });
 
-        this.canvas.addEventListener("mousedown", (event) => {
+        window.addEventListener("mousedown", (event) => {
             this.updateCursorPosition(event);
 
             let draggedElement: BoardElement | null = null;
@@ -195,7 +197,7 @@ class Board {
             this.draggedElement = draggedElement;
         });
 
-        this.canvas.addEventListener("mouseup", () => {
+        window.addEventListener("mouseup", () => {
             this.draggedElement = null;
         });
 
