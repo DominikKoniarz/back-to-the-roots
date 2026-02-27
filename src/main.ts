@@ -99,21 +99,10 @@ class Board {
             throw new Error("Context not found");
         }
 
-        let lastElementToRender: BoardElement | null = null;
-
         for (let i = 0; i < this.elements.length; i++) {
             const element = this.elements[i];
 
-            if (this.draggedElement === element) {
-                lastElementToRender = element;
-                continue;
-            }
-
             element.draw(ctx);
-        }
-
-        if (lastElementToRender) {
-            lastElementToRender.draw(ctx);
         }
     }
 
@@ -227,6 +216,16 @@ class Board {
             this.dragOffsetX = this.cursorX - draggedElementPosition.x;
             this.dragOffsetY = this.cursorY - draggedElementPosition.y;
             this.draggedElement = draggedElement;
+
+            // bubble up the element to the top of the stack (end of the array)
+            this.elements.push(
+                this.elements.splice(
+                    this.elements.indexOf(draggedElement),
+                    1
+                )[0]
+            );
+            this.renderElements(); // TODO: could this be optimized?
+            // rendering of elements is a little bit screwed
         });
 
         window.addEventListener("mouseup", () => {
