@@ -161,15 +161,15 @@ class Board {
     }
 
     private static handleCursorStyle(event: MouseEvent) {
+        if (this.draggedElement) {
+            window.document.body.style.cursor = "grabbing";
+            return;
+        }
+
         const isPointInCanvas = event.target === this.canvas;
 
         if (!isPointInCanvas) {
             window.document.body.style.cursor = "default";
-            return;
-        }
-
-        if (this.draggedElement) {
-            window.document.body.style.cursor = "grabbing";
             return;
         }
 
