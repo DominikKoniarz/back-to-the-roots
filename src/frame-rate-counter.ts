@@ -21,6 +21,7 @@ export class FrameRateCounter {
         frameRateCounter.style.fontSize = "16px";
         frameRateCounter.style.fontWeight = "bold";
         frameRateCounter.style.zIndex = "1000";
+        frameRateCounter.style.userSelect = "none";
 
         this.frameRateCounter = frameRateCounter;
         return frameRateCounter;
