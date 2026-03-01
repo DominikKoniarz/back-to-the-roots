@@ -160,6 +160,37 @@ class Board {
         );
     }
 
+    private static handleCursorStyle(event: MouseEvent) {
+        const isPointInCanvas = event.target === this.canvas;
+
+        if (!isPointInCanvas) {
+            window.document.body.style.cursor = "default";
+            return;
+        }
+
+        if (this.draggedElement) {
+            window.document.body.style.cursor = "grabbing";
+            return;
+        }
+
+        let shouldBeCursorPointer = false;
+
+        for (let i = 0; i < this.elements.length; i++) {
+            const element = this.elements[i];
+
+            if (element.isPointInElement(this.cursorX, this.cursorY)) {
+                shouldBeCursorPointer = true;
+                break;
+            }
+        }
+
+        if (shouldBeCursorPointer) {
+            window.document.body.style.cursor = "pointer";
+        } else {
+            window.document.body.style.cursor = "default";
+        }
+    }
+
     private static registerEvents() {
         window.addEventListener("resize", () => {
             this.resizeCanvas();
@@ -184,6 +215,8 @@ class Board {
                 this.clearCanvas();
                 this.renderElements();
             }
+
+            this.handleCursorStyle(event);
         });
 
         window.addEventListener("mousedown", (event) => {
@@ -208,28 +241,31 @@ class Board {
 
             if (!draggedElement) {
                 this.draggedElement = null;
-                return;
+            } else {
+                const draggedElementPosition = draggedElement.getPosition();
+
+                this.dragOffsetX = this.cursorX - draggedElementPosition.x;
+                this.dragOffsetY = this.cursorY - draggedElementPosition.y;
+                this.draggedElement = draggedElement;
+
+                // bubble up the element to the top of the stack (end of the array)
+                this.elements.push(
+                    this.elements.splice(
+                        this.elements.indexOf(draggedElement),
+                        1
+                    )[0]
+                );
+                this.renderElements(); // TODO: could this be optimized?
+                // rendering of elements is a little bit screwed
             }
 
-            const draggedElementPosition = draggedElement.getPosition();
-
-            this.dragOffsetX = this.cursorX - draggedElementPosition.x;
-            this.dragOffsetY = this.cursorY - draggedElementPosition.y;
-            this.draggedElement = draggedElement;
-
-            // bubble up the element to the top of the stack (end of the array)
-            this.elements.push(
-                this.elements.splice(
-                    this.elements.indexOf(draggedElement),
-                    1
-                )[0]
-            );
-            this.renderElements(); // TODO: could this be optimized?
-            // rendering of elements is a little bit screwed
+            this.handleCursorStyle(event);
         });
 
-        window.addEventListener("mouseup", () => {
+        window.addEventListener("mouseup", (event) => {
             this.draggedElement = null;
+
+            this.handleCursorStyle(event);
         });
 
         this.canvas.addEventListener("dblclick", () => {
